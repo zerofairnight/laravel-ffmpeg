@@ -4,9 +4,6 @@ namespace Laravel\FFMpeg\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-/**
- * Class Telegram.
- */
 class FFMpeg extends Facade
 {
     /**
