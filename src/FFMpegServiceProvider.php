@@ -41,7 +41,13 @@ class FFMpegServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton('ffmpeg', function ($app) {
-            return new FFMpeg($app->make(FFMpegDriver::class));
+            $ffmpeg = \FFMpeg\FFMpeg::create(array(
+                'ffmpeg.binaries' => $app['config']['ffmpeg.ffmpeg.bin'] ?? 'ffmpeg',
+                'ffprobe.binaries' => $app['config']['ffmpeg.ffprobe.bin'] ?? 'ffprobe',
+                'timeout' => $app['config']['ffmpeg.ffmpeg.timeout'],
+                'ffmpeg.threads' => $app['config']['ffmpeg.ffmpeg.threads'],
+            ));
+            return new FFMpeg($app->make(FFMpegDriver::class), $ffmpeg);
         });
 
         $this->app->singleton('ffprobe', function ($app) {

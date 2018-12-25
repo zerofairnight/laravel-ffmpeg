@@ -16,13 +16,21 @@ class FFMpeg
     protected $driver;
 
     /**
+     * The php-ffmpeg instance.
+     *
+     * @var mixed
+     */
+    protected $ffmpeg;
+
+    /**
      * Create a new ffmpeg instance.
      *
      * @param \Laravel\FFMpeg\FFMpegDriver $driver
      */
-    function __construct(FFMpegDriver $driver)
+    function __construct(FFMpegDriver $driver, $ffmpeg)
     {
         $this->driver = $driver;
+        $this->ffmpeg = $ffmpeg;
     }
 
     /**
@@ -33,5 +41,16 @@ class FFMpeg
     public function getDriver()
     {
         return $this->driver;
+    }
+
+    /**
+     * Opens a file in order to be processed.
+     *
+     * @param mixed $file
+     * @return Audio|Video
+     */
+    public function open($file)
+    {
+        return $this->ffmpeg->open($file);
     }
 }
