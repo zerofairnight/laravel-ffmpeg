@@ -36,7 +36,7 @@ class FFProbe
     }
 
     /**
-     * Undocumented function
+     * Undocumented function.
      *
      * @param string $file
      * @return void
