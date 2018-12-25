@@ -1,5 +1,5 @@
 {
-    "name": "zero/laravel-ffmpeg",
+    "name": "zerofairnight/laravel-ffmpeg",
     "description": "Laravel FFMpeg integraion",
     "keywords": ["ffmpeg", "laravel"],
     "license": "MIT",
