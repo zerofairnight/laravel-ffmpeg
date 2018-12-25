@@ -1,0 +1,43 @@
+{
+    "name": "zero/laravel-ffmpeg",
+    "description": "Laravel FFMpeg integraion",
+    "keywords": ["ffmpeg", "laravel"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "zerofairnight",
+            "email": "zerofairnight@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.1.3",
+        "illuminate/support": "~5",
+        "symfony/process": "^4.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Laravel\\FFMpeg\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Laravel\\FFMpeg\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Laravel\\FFMpeg\\FFMpegServiceProvider"
+            ],
+            "aliases": {
+                "FFMpeg": "Laravel\\FFMpeg\\Facades\\FFMpeg",
+                "FFProbe": "Laravel\\FFMpeg\\Facades\\FFProbe"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
