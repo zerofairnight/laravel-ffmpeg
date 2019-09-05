@@ -39,20 +39,29 @@ class FFProbe
      * Undocumented function.
      *
      * @param string $file
-     * @return void
+     *
+     * @return \Laravel\FFMpeg\FFProbeOutput
+     *
+     * @throws \RuntimeException
      */
     public function info($file)
     {
-        $output = $this->driver->run([
-            '-v', 'quiet',
-            '-show_error',
-            '-show_format',
-            '-show_streams',
-            '-print_format', 'json=compact=1', // compact json
-            '-i',
-            (string) $file
-        ]);
+        try {
+            $output = $this->driver->run([
+                '-v', 'quiet',
+                '-show_error',
+                '-show_format',
+                '-show_streams',
+                '-print_format', 'json=compact=1', // compact json
+                '-i',
+                (string) $file
+            ]);
+        } catch (\Symfony\Component\Process\Exception\ProcessFailedException $e) {
+            throw new \RuntimeException(
+                \sprintf('Unable to probe %s', $file), $e->getCode(), $e
+            );
+        }
 
-        return new FFProbeOutput(json_decode($output, true));
+        return new FFProbeOutput(\json_decode($output, true));
     }
 }
