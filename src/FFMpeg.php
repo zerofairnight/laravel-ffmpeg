@@ -2,6 +2,7 @@
 
 namespace Laravel\FFMpeg;
 
+use FFMpeg\FFMpeg as PHPFFMpeg;
 use Illuminate\Support\Traits\Macroable;
 
 class FFMpeg
@@ -18,7 +19,7 @@ class FFMpeg
     /**
      * The php-ffmpeg instance.
      *
-     * @var mixed
+     * @var \FFMpeg\FFMpeg
      */
     protected $ffmpeg;
 
@@ -26,8 +27,9 @@ class FFMpeg
      * Create a new ffmpeg instance.
      *
      * @param \Laravel\FFMpeg\FFMpegDriver $driver
+     * @param \FFMpeg\FFMpeg $ffmpeg
      */
-    function __construct(FFMpegDriver $driver, $ffmpeg)
+    function __construct(FFMpegDriver $driver, PHPFFMpeg $ffmpeg)
     {
         $this->driver = $driver;
         $this->ffmpeg = $ffmpeg;
@@ -47,7 +49,8 @@ class FFMpeg
      * Opens a file in order to be processed.
      *
      * @param mixed $file
-     * @return Audio|Video
+     *
+     * @return \FFMpeg\Audio|\FFMpeg\Video
      */
     public function open($file)
     {
