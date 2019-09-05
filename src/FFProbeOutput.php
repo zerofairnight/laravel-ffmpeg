@@ -2,6 +2,8 @@
 
 namespace Laravel\FFMpeg;
 
+use Illuminate\Support\Arr;
+
 class FFProbeOutput
 {
     /**
@@ -10,6 +12,20 @@ class FFProbeOutput
      * @var array
      */
     protected $data;
+
+    /**
+     * The videos stream data.
+     *
+     * @var array
+     */
+    protected $videos;
+
+    /**
+     * The audios stream data.
+     *
+     * @var array
+     */
+    protected $audios;
 
     /**
      * Create a new ffprobe output instance.
@@ -26,9 +42,13 @@ class FFProbeOutput
      */
     public function videos()
     {
-        return array_filter($this->data['streams'], function ($stream) {
-            return $stream['codec_type'] === 'video';
-        });
+        if ($this->videos === null) {
+            $this->videos = \array_values(\array_filter($this->data['streams'], function ($stream) {
+                return $stream['codec_type'] === 'video';
+            }));
+        }
+
+        return $this->videos;
     }
 
     /**
@@ -40,7 +60,7 @@ class FFProbeOutput
     {
         $videos = $this->videos();
 
-        return count($videos) ? $videos[0] : null;
+        return $videos[0] ?? null;
     }
 
     /**
@@ -50,9 +70,13 @@ class FFProbeOutput
      */
     public function audios()
     {
-        return array_filter($this->data['streams'], function ($stream) {
-            return $stream['codec_type'] === 'audio';
-        });
+        if ($this->audios === null) {
+            $this->audios = \array_values(\array_filter($this->data['streams'], function ($stream) {
+                return $stream['codec_type'] === 'audio';
+            }));
+        }
+
+        return $this->audios;
     }
 
     /**
@@ -64,7 +88,20 @@ class FFProbeOutput
     {
         $audios = $this->audios();
 
-        return count($audios) ? $audios[0] : null;
+        return $audios[0] ?? null;
+    }
+
+    /**
+     * Get the with and height of the input file.
+     *
+     * @return array
+     */
+    public function dimensions()
+    {
+        return [
+            $this->width(),
+            $this->height(),
+        ];
     }
 
     /**
@@ -94,43 +131,46 @@ class FFProbeOutput
      */
     public function duration()
     {
-        return $this->get('video|audio.duration');
+        return $this->get('video|audio.duration') ?: $this->get('format.duration');
     }
 
     /**
      * Retrieves a value from the data array using "dot" notation.
      *
-     * @return mixed
+     * @param string $key
+     * @param mixed $default
+     *
+     * @return array
      */
-    public function get($key)
+    public function get($key, $default = null)
     {
-        if (is_null($key)) {
+        if ($key === null) {
             return $this->data;
         }
 
         $data = $this->data;
 
-        if (strpos($key, 'video.') === 0) {
+        if (\strpos($key, 'video.') === 0) {
             $data = $this->video();
             $key = substr($key, 6);
         }
 
-        if (strpos($key, 'audio.') === 0) {
+        if (\strpos($key, 'audio.') === 0) {
             $data = $this->audio();
             $key = substr($key, 6);
         }
 
-        if (strpos($key, 'video|audio.') === 0) {
+        if (\strpos($key, 'video|audio.') === 0) {
             $data = $this->video();
             $key = substr($key, 12);
 
-            if (array_get($data, $key) === null) {
+            if (Arr::get($data, $key, $default) === null) {
                 $data = $this->audio();
             }
 
-            return array_get($data, $key);
+            return Arr::get($data, $key, $default);
         }
 
-        return array_get($data, $key);
+        return Arr::get($data, $key, $default);
     }
 }
