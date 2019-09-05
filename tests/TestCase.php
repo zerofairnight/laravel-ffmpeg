@@ -18,25 +18,31 @@ abstract class TestCase extends BaseTestCase
     protected $ffmpeg;
 
     /**
+     * The cached ffprobe instance.
+     *
+     * @var \Laravel\FFMpeg\FFProbe
+     */
+    protected $ffprobe;
+
+    /**
      * Get the ffmpeg instance.
      *
      * @return \Laravel\FFMpeg\FFMpeg
      */
     public function ffmpeg()
     {
-        if (is_null($this->ffmpeg)) {
-            $this->ffmpeg = new FFMpeg(new FFMpegDriver('ffmpeg'));
+        if ($this->ffmpeg === null) {
+            $this->ffmpeg = new FFMpeg(
+                new FFMpegDriver($_ENV['FFMPEG_BIN']),
+                \FFMpeg\FFMpeg::create([
+                    'ffmpeg.binaries' => $_ENV['FFMPEG_BIN'],
+                    'ffprobe.binaries' => $_ENV['FFPROBE_BIN'],
+                ])
+            );
         }
 
         return $this->ffmpeg;
     }
-
-    /**
-     * The cached ffprobe instance.
-     *
-     * @var \Laravel\FFMpeg\FFProbe
-     */
-    protected $ffprobe;
 
     /**
      * Get the ffprobe instance.
@@ -45,10 +51,22 @@ abstract class TestCase extends BaseTestCase
      */
     public function ffprobe()
     {
-        if (is_null($this->ffprobe)) {
-            $this->ffprobe = new FFProbe(new FFProbeDriver('ffprobe'));
+        if ($this->ffprobe === null) {
+            $this->ffprobe = new FFProbe(
+                new FFProbeDriver($_ENV['FFPROBE_BIN'])
+            );
         }
 
         return $this->ffprobe;
+    }
+
+    /**
+     * Get a fixture file path.
+     *
+     * @return string
+     */
+    public function fixture($file)
+    {
+        return __DIR__.DIRECTORY_SEPARATOR.'fixtures'.DIRECTORY_SEPARATOR.$file;
     }
 }
