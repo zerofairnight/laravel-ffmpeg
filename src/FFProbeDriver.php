@@ -29,18 +29,16 @@ class FFProbeDriver
      *
      * @param array $command The command to run and its arguments listed as separate entries
      * @param callable $callback
-     * @return void
+     *
+     * @return string
      */
-    public function run(array $command, callable $callback = null)
+    public function run(array $commands = [], callable $callback = null)
     {
-        $commands = [$this->bin];
-
-        // combine the args to create a full command
-        array_push($commands, ...$command);
+        \array_unshift($commands, $this->bin);
 
         $process = new Process($commands);
 
-        if (! is_null($callback)) {
+        if ($callback) {
             $callback($process);
         }
 
